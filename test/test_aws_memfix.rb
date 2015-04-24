@@ -12,20 +12,22 @@ class TestAwsMemfix < Minitest::Test
   end
 
   def test_memory_leaking
-    results = measure_sqs(1000)
-    puts "leaking: #{results}" if $DEBUG
+    begin
+      Seahorse.send(:remove_const, :StringIO)
+      leaking_results = measure_sqs(1000)
+    ensure
+      load File.expand_path("../lib/seahorse/stringio.rb", __dir__)
+    end
 
-    assert results[:memory] > 5000
-    assert results[:leaks] > 500
-  end
+    nonleak_results = measure_sqs(1000)
 
-  def test_memory_not_leaking
-    require "aws_memfix"
-    results = measure_sqs(1000)
-    puts "not leaking: #{results}" if $DEBUG
+    if ENV["DEBUG"]
+      puts "Leaking: #{leaking_results}"
+      puts "NonLeak: #{nonleak_results}"
+    end
 
-    assert results[:memory] < 2000
-    assert results[:leaks] < 100
+    assert leaking_results[:leaks] > nonleak_results[:leaks]
+    assert leaking_results[:memory] > nonleak_results[:memory]
   end
 
   private

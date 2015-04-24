@@ -1,5 +1,4 @@
 require_relative "../minitest_helper"
-require "seahorse/stringio"
 
 module StringIOTest
   def test_that_it_returns_the_number_of_bytes_written
