@@ -7,6 +7,7 @@ module Seahorse
 
     def write(data)
       @data << data
+      @offset += data.bytesize
       data.bytesize
     end
 
@@ -28,6 +29,10 @@ module Seahorse
       bytes
     end
 
+    def size
+      @data.bytesize
+    end
+
     private
 
     def partial_read(bytes)
@@ -41,9 +46,9 @@ module Seahorse
     end
 
     def full_read
-      data = @offset == 0 ? @data : @data[@offset,-1]
+      data = @offset == 0 ? @data : @data[@offset..-1]
       @offset = @data.bytesize
-      data
+      data || ''
     end
 
     def bump_offset(bytes)
