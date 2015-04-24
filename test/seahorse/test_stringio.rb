@@ -11,7 +11,10 @@ module StringIOTest
 
     @io.rewind
     assert_equal "f", @io.read(1)
+    refute @io.eof? && @io.eof
+
     assert_equal "oo", @io.read
+    assert @io.eof? && @io.eof
   end
 
   def test_that_it_reads_to_buffer

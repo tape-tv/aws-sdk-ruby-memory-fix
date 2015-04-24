@@ -33,6 +33,11 @@ module Seahorse
       @data.bytesize
     end
 
+    def eof
+      @offset == @data.bytesize
+    end
+    alias_method :eof?, :eof
+
     private
 
     def partial_read(bytes)
